@@ -17,10 +17,11 @@ package cloudpan
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/library-go/logger"
 	"strconv"
 	"strings"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/library-go/logger"
 )
 
 type (
@@ -87,6 +88,9 @@ func (p *PanClient) CreateBatchTask(param *BatchTaskParam) (taskId string, error
 	fmt.Fprintf(fullUrl, "%s/createBatchTask.action", WEB_URL)
 	logger.Verboseln("do request url: " + fullUrl.String())
 	taskInfosStr, err := json.Marshal(param.TaskInfos)
+	if err != nil {
+		return "", apierror.NewApiErrorWithError(err)
+	}
 	var postData map[string]string
 	if BatchTaskTypeDelete == param.TypeFlag || BatchTaskTypeRecycleRestore == param.TypeFlag {
 		postData = map[string]string{

@@ -19,11 +19,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
-	"github.com/tickstep/library-go/crypto"
-	"github.com/tickstep/library-go/logger"
-	"github.com/tickstep/library-go/requester"
 	"image/png"
 	"io/ioutil"
 	"net/http"
@@ -32,6 +27,12 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
+	"github.com/tickstep/library-go/crypto"
+	"github.com/tickstep/library-go/logger"
+	"github.com/tickstep/library-go/requester"
 )
 
 const (
@@ -243,7 +244,7 @@ func doLoginAct(username, password, validateCode, captchaToken, returnUrl, param
 
 	r := &loginResult{}
 	if err := json.Unmarshal(body, r); err != nil {
-		logger.Verboseln("parse login resutl json error ", err)
+		logger.Verboseln("parse login result json error ", err)
 		return nil, apierror.NewFailedApiError(err.Error())
 	}
 	return r, nil
@@ -254,7 +255,7 @@ func buildCookie(cookieMap map[string]string) []*http.Cookie {
 		return nil
 	}
 
-	c := make([]*http.Cookie, 0, 0)
+	c := make([]*http.Cookie, 0)
 	for k, v := range cookieMap {
 		c = append(c,
 			&http.Cookie{

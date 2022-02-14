@@ -82,10 +82,8 @@ func (p *PanClient) AppUserSign() (*AppUserSignResult, *apierror.ApiError) {
 	switch item.Result {
 	case 1:
 		result.Status = AppUserSignStatusSuccess
-		break
 	case -1:
 		result.Status = AppUserSignStatusHasSign
-		break
 	default:
 		result.Status = AppUserSignStatusFailed
 	}

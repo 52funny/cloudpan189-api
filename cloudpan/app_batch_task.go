@@ -60,6 +60,9 @@ func (p *PanClient) AppCreateBatchTask(familyId int64, param *BatchTaskParam) (t
 
 	logger.Verboseln("do request url: " + fullUrl.String())
 	taskInfosStr, err := json.Marshal(param.TaskInfos)
+	if err != nil {
+		return "", apierror.NewApiErrorWithError(err)
+	}
 	var postData map[string]string
 	if BatchTaskTypeDelete == param.TypeFlag {
 		postData = map[string]string{
