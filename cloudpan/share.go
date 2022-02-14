@@ -17,32 +17,33 @@ package cloudpan
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/library-go/logger"
-	"github.com/tickstep/library-go/text"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/library-go/logger"
+	"github.com/tickstep/library-go/text"
 )
 
 type (
 	ShareExpiredTime int
-	ShareMode int
+	ShareMode        int
 
 	PrivateShareResult struct {
-		AccessCode string `json:"accessCode"`
+		AccessCode    string `json:"accessCode"`
 		ShortShareUrl string `json:"shortShareUrl"`
 	}
 
 	PublicShareResult struct {
-		ShareId int64 `json:"shareId"`
+		ShareId       int64  `json:"shareId"`
 		ShortShareUrl string `json:"shortShareUrl"`
 	}
 
 	AccessCount struct {
-		CopyCount int `json:"copyCount"`
+		CopyCount     int `json:"copyCount"`
 		DownloadCount int `json:"downloadCount"`
-		PreviewCount int `json:"previewCount"`
+		PreviewCount  int `json:"previewCount"`
 	}
 
 	ShareItem struct {
@@ -71,8 +72,8 @@ type (
 		// IsFolder 是否是文件夹
 		IsFolder bool `json:"isFolder"`
 		// MediaType 文件类别
-		MediaType MediaType `json:"mediaType"`
-		NeedAccessCode int `json:"needAccessCode"`
+		MediaType      MediaType `json:"mediaType"`
+		NeedAccessCode int       `json:"needAccessCode"`
 		// NickName 分享者账号昵称
 		NickName string `json:"nickName"`
 		// ReviewStatus 审查状态，1-正常
@@ -95,16 +96,16 @@ type (
 
 	// ShareListResult 获取分享项目列表响应体
 	ShareListResult struct {
-		Data ShareItemList `json:"data"`
-		PageNum int `json:"pageNum"`
-		PageSize int `json:"pageSize"`
-		RecordCount int `json:"recordCount"`
+		Data        ShareItemList `json:"data"`
+		PageNum     int           `json:"pageNum"`
+		PageSize    int           `json:"pageSize"`
+		RecordCount int           `json:"recordCount"`
 	}
 
 	ShareListParam struct {
 		ShareType int `json:"shareType"`
-		PageNum int `json:"pageNum"`
-		PageSize int `json:"pageSize"`
+		PageNum   int `json:"pageNum"`
+		PageSize  int `json:"pageSize"`
 	}
 
 	errResp struct {
@@ -122,13 +123,13 @@ type (
 			FileList []struct {
 				CreateDate string `json:"createDate"`
 				FileCata   int    `json:"fileCata"`
-				Id         int64 `json:"id"`
+				Id         int64  `json:"id"`
 				LastOpTime string `json:"lastOpTime"`
 				Md5        string `json:"md5"`
 				MediaType  int    `json:"mediaType"`
 				Name       string `json:"name"`
 				Rev        string `json:"rev"`
-				Size       int64    `json:"size"`
+				Size       int64  `json:"size"`
 				StarLabel  int    `json:"starLabel"`
 			} `json:"fileList"`
 			FileListSize int64 `json:"fileListSize"`
@@ -136,17 +137,16 @@ type (
 				CreateDate   string `json:"createDate"`
 				FileCata     int    `json:"fileCata"`
 				FileListSize int    `json:"fileListSize"`
-				Id           int64 `json:"id"`
+				Id           int64  `json:"id"`
 				LastOpTime   string `json:"lastOpTime"`
 				Name         string `json:"name"`
-				ParentId     int64 `json:"parentId"`
+				ParentId     int64  `json:"parentId"`
 				Rev          string `json:"rev"`
 				StarLabel    int    `json:"starLabel"`
 			} `json:"folderList"`
 		} `json:"fileListAO"`
 		LastRev int64 `json:"lastRev"`
 	}
-
 )
 
 const (
@@ -214,8 +214,8 @@ func (p *PanClient) SharePublic(fileId string, expiredTime ShareExpiredTime) (*P
 func NewShareListParam() *ShareListParam {
 	return &ShareListParam{
 		ShareType: 1,
-		PageNum: 1,
-		PageSize: 60,
+		PageNum:   1,
+		PageSize:  60,
 	}
 }
 func (p *PanClient) ShareList(param *ShareListParam) (*ShareListResult, *apierror.ApiError) {
@@ -248,7 +248,7 @@ func (p *PanClient) ShareCancel(shareIdList []int64) (bool, *apierror.ApiError) 
 		shareIds += strconv.FormatInt(id, 10) + ","
 	}
 	if strings.LastIndex(shareIds, ",") == (len(shareIds) - 1) {
-		shareIds = text.Substr(shareIds, 0, len(shareIds) - 1)
+		shareIds = text.Substr(shareIds, 0, len(shareIds)-1)
 	}
 
 	fmt.Fprintf(fullUrl, "%s/api/portal/cancelShare.action?shareIdList=%s&ancelType=1",
@@ -283,10 +283,10 @@ func (p *PanClient) ShareSave(accessUrl string, accessCode string, savePanDirId 
 		shareCode = string(rs[idx+1:])
 	}
 	fullUrl := &strings.Builder{}
-	header := map[string]string {
-		"accept": "application/json;charset=UTF-8",
-		"origin": "https://cloud.189.cn",
-		"Referer": "https://cloud.189.cn/web/share?code=" + shareCode,
+	header := map[string]string{
+		"accept":     "application/json;charset=UTF-8",
+		"origin":     "https://cloud.189.cn",
+		"Referer":    "https://cloud.189.cn/web/share?code=" + shareCode,
 		"user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36",
 	}
 
@@ -302,9 +302,9 @@ func (p *PanClient) ShareSave(accessUrl string, accessCode string, savePanDirId 
 	}
 
 	type shareInfoByCode struct {
-		ResCode    int    `json:"res_code"`
-		ResMessage string `json:"res_message"`
-		AccessCode string `json:"accessCode"`
+		ResCode        int    `json:"res_code"`
+		ResMessage     string `json:"res_message"`
+		AccessCode     string `json:"accessCode"`
 		ExpireTime     int    `json:"expireTime"`
 		ExpireType     int    `json:"expireType"`
 		FileId         string `json:"fileId"`
@@ -313,7 +313,7 @@ func (p *PanClient) ShareSave(accessUrl string, accessCode string, savePanDirId 
 		IsFolder       bool   `json:"isFolder"`
 		NeedAccessCode int    `json:"needAccessCode"`
 		ShareDate      int64  `json:"shareDate"`
-		ShareId        int64    `json:"shareId"`
+		ShareId        int64  `json:"shareId"`
 		ShareMode      int    `json:"shareMode"`
 		ShareType      int    `json:"shareType"`
 	}
@@ -322,7 +322,6 @@ func (p *PanClient) ShareSave(accessUrl string, accessCode string, savePanDirId 
 		logger.Verboseln("getShareInfoByCode response failed")
 		return false, apierror.NewApiErrorWithError(err)
 	}
-
 
 	// 获取分享文件列表
 	fullUrl = &strings.Builder{}
@@ -346,12 +345,12 @@ func (p *PanClient) ShareSave(accessUrl string, accessCode string, savePanDirId 
 		return false, apierror.NewApiErrorWithError(err)
 	}
 
-    // 转存分享
+	// 转存分享
 	taskReqParam := &BatchTaskParam{
-		TypeFlag: BatchTaskTypeShareSave,
-		TaskInfos: makeBatchTaskInfoListForShareSave(listShareDirEnity),
+		TypeFlag:       BatchTaskTypeShareSave,
+		TaskInfos:      makeBatchTaskInfoListForShareSave(listShareDirEnity),
 		TargetFolderId: savePanDirId,
-		ShareId: shareInfoEnity.ShareId,
+		ShareId:        shareInfoEnity.ShareId,
 	}
 	taskId, apierror1 := p.CreateBatchTask(taskReqParam)
 	logger.Verboseln("share save taskid: ", taskId)
@@ -362,7 +361,7 @@ func makeBatchTaskInfoListForShareSave(opFileList *listShareDirResult) (infoList
 	// file
 	for _, fe := range opFileList.FileListAO.FileList {
 		infoItem := &BatchTaskInfo{
-			FileId: strconv.FormatInt(fe.Id, 10),
+			FileId:   strconv.FormatInt(fe.Id, 10),
 			FileName: fe.Name,
 			IsFolder: 0,
 		}
@@ -372,7 +371,7 @@ func makeBatchTaskInfoListForShareSave(opFileList *listShareDirResult) (infoList
 	// folder
 	for _, fe := range opFileList.FileListAO.FolderList {
 		infoItem := &BatchTaskInfo{
-			FileId: strconv.FormatInt(fe.Id, 10),
+			FileId:   strconv.FormatInt(fe.Id, 10),
 			FileName: fe.Name,
 			IsFolder: 1,
 		}

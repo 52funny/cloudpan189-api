@@ -18,25 +18,26 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
 	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
 	"github.com/tickstep/library-go/logger"
-	"strconv"
-	"strings"
 )
 
 type (
 	AppCreateBatchTaskResult struct {
 		TaskId string `xml:"taskId"`
 	}
-	
+
 	AppCheckBatchTaskResult struct {
-		TaskId string `xml:"taskId"`
-		TaskStatus int `xml:"taskStatus"`
-		SubTaskCount int `xml:"subTaskCount"`
-		SuccessCount int `xml:"successedCount"`
-		FailedCount int `xml:"failedCount"`
-		SkipCount int `xml:"skipCount"`
+		TaskId       string `xml:"taskId"`
+		TaskStatus   int    `xml:"taskStatus"`
+		SubTaskCount int    `xml:"subTaskCount"`
+		SuccessCount int    `xml:"successedCount"`
+		FailedCount  int    `xml:"failedCount"`
+		SkipCount    int    `xml:"skipCount"`
 	}
 )
 
@@ -49,10 +50,10 @@ func (p *PanClient) AppCreateBatchTask(familyId int64, param *BatchTaskParam) (t
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "POST"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 	}
@@ -61,8 +62,8 @@ func (p *PanClient) AppCreateBatchTask(familyId int64, param *BatchTaskParam) (t
 	taskInfosStr, err := json.Marshal(param.TaskInfos)
 	var postData map[string]string
 	if BatchTaskTypeDelete == param.TypeFlag {
-		postData = map[string]string {
-			"type": string(param.TypeFlag),
+		postData = map[string]string{
+			"type":      string(param.TypeFlag),
 			"taskInfos": string(taskInfosStr),
 		}
 	} else {
@@ -102,29 +103,29 @@ func (p *PanClient) AppCreateBatchTask(familyId int64, param *BatchTaskParam) (t
 }
 
 // AppCheckBatchTask 检测批量任务状态和结果
-func (p *PanClient) AppCheckBatchTask (typeFlag BatchTaskType, taskId string) (result *CheckTaskResult, error *apierror.ApiError) {
+func (p *PanClient) AppCheckBatchTask(typeFlag BatchTaskType, taskId string) (result *CheckTaskResult, error *apierror.ApiError) {
 	fullUrl := &strings.Builder{}
 	fmt.Fprintf(fullUrl, "%s/batch/checkBatchTask.action", API_URL)
 	sessionKey := p.appToken.FamilySessionKey
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "POST"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 	}
 
 	logger.Verboseln("do request url: " + fullUrl.String())
-	postData := map[string]string {
-		"type": string(typeFlag),
-		"taskId": taskId,
+	postData := map[string]string{
+		"type":       string(typeFlag),
+		"taskId":     taskId,
 		"clientType": "TELEPC",
-		"version": "6.2",
-		"channelId": "web_cloud.189.cn",
-		"rand": apiutil.Rand(),
+		"version":    "6.2",
+		"channelId":  "web_cloud.189.cn",
+		"rand":       apiutil.Rand(),
 	}
 	respBody, err := p.client.Fetch(httpMethod, fullUrl.String(), postData, headers)
 	if err != nil {

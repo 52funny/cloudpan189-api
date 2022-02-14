@@ -59,7 +59,6 @@ func (p *PanClient) Mkdir(parentFileId, dirName string) (*MkdirResult, *apierror
 	return item, nil
 }
 
-
 func (p *PanClient) MkdirRecursive(parentFileId string, fullPath string, index int, pathSlice []string) (*MkdirResult, *apierror.ApiError) {
 	r := &MkdirResult{}
 	if parentFileId == "" {
@@ -73,7 +72,7 @@ func (p *PanClient) MkdirRecursive(parentFileId string, fullPath string, index i
 		}
 
 		fullPath = ""
-		return p.MkdirRecursive(parentFileId, fullPath, index + 1, pathSlice)
+		return p.MkdirRecursive(parentFileId, fullPath, index+1, pathSlice)
 	}
 
 	if index >= len(pathSlice) {
@@ -94,7 +93,7 @@ func (p *PanClient) MkdirRecursive(parentFileId string, fullPath string, index i
 	// existed?
 	for _, fileEntity := range fileResult.Data {
 		if fileEntity.FileName == pathSlice[index] {
-			return p.MkdirRecursive(fileEntity.FileId, fullPath + "/" + pathSlice[index], index + 1, pathSlice)
+			return p.MkdirRecursive(fileEntity.FileId, fullPath+"/"+pathSlice[index], index+1, pathSlice)
 		}
 	}
 
@@ -113,9 +112,9 @@ func (p *PanClient) MkdirRecursive(parentFileId string, fullPath string, index i
 		return r, err
 	}
 
-	if (index+1) >= len(pathSlice) {
+	if (index + 1) >= len(pathSlice) {
 		return rs, nil
 	} else {
-		return p.MkdirRecursive(rs.FileId, fullPath + "/" + pathSlice[index], index + 1, pathSlice)
+		return p.MkdirRecursive(rs.FileId, fullPath+"/"+pathSlice[index], index+1, pathSlice)
 	}
 }

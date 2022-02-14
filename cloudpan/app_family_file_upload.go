@@ -40,10 +40,10 @@ func (p *PanClient) AppFamilyCreateUploadFile(param *AppCreateUploadFileParam) (
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := apiutil.XRequestId()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 
@@ -76,18 +76,18 @@ func (p *PanClient) AppFamilyUploadFileData(familyId int64, uploadUrl, uploadFil
 	requestId := xRequestId
 	sessionKey := p.appToken.FamilySessionKey
 	sessionSecret := p.appToken.FamilySessionSecret
-	headers := map[string]string {
-		"Accept": "*/*",
-		"FamilyId": strconv.FormatInt(familyId, 10),
-		"Content-Type": "application/octet-stream",
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl, dateOfGmt),
-		"X-Request-ID": requestId,
-		"ResumePolicy": "1",
-		"UploadFileId": uploadFileId,
+	headers := map[string]string{
+		"Accept":                 "*/*",
+		"FamilyId":               strconv.FormatInt(familyId, 10),
+		"Content-Type":           "application/octet-stream",
+		"Date":                   dateOfGmt,
+		"SessionKey":             sessionKey,
+		"Signature":              apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl, dateOfGmt),
+		"X-Request-ID":           requestId,
+		"ResumePolicy":           "1",
+		"UploadFileId":           uploadFileId,
 		"Edrive-UploadFileRange": "bytes=" + strconv.FormatInt(fileRange.Offset, 10) + "-" + strconv.FormatInt(fileRange.Len, 10),
-		"Expect": "100-continue",
+		"Expect":                 "100-continue",
 	}
 
 	logger.Verboseln("do request url: " + fullUrl)
@@ -119,14 +119,14 @@ func (p *PanClient) AppFamilyUploadFileCommit(familyId int64, uploadCommitUrl, u
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := xRequestId
-	headers := map[string]string {
-		"FamilyId": strconv.FormatInt(familyId, 10),
+	headers := map[string]string{
+		"FamilyId":     strconv.FormatInt(familyId, 10),
 		"ResumePolicy": "1",
 		"uploadFileId": uploadFileId,
 
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl, dateOfGmt),
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl, dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 
@@ -164,10 +164,10 @@ func (p *PanClient) AppFamilyGetUploadFileStatus(familyId int64, uploadFileId st
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := apiutil.XRequestId()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 
@@ -191,10 +191,10 @@ func (p *PanClient) AppFamilyGetUploadFileStatus(familyId int64, uploadFileId st
 		// 上传文件的ID
 		UploadFileId string `xml:"uploadFileId"`
 		// 已上传的大小
-		Size int64 `xml:"dataSize"`
-		FileUploadUrl string `xml:"fileUploadUrl"`
-		FileCommitUrl string `xml:"fileCommitUrl"`
-		FileDataExists int `xml:"fileDataExists"`
+		Size           int64  `xml:"dataSize"`
+		FileUploadUrl  string `xml:"fileUploadUrl"`
+		FileCommitUrl  string `xml:"fileCommitUrl"`
+		FileDataExists int    `xml:"fileDataExists"`
 	}
 	itemInternal := &appGetUploadFileStatusResult{}
 	if err := xml.Unmarshal(respBody, itemInternal); err != nil {
@@ -202,11 +202,11 @@ func (p *PanClient) AppFamilyGetUploadFileStatus(familyId int64, uploadFileId st
 		return nil, apierror.NewApiErrorWithError(err)
 	}
 	return &AppGetUploadFileStatusResult{
-		XMLName: itemInternal.XMLName,
-		UploadFileId: itemInternal.UploadFileId,
-		Size: itemInternal.Size,
-		FileUploadUrl: itemInternal.FileUploadUrl,
-		FileCommitUrl: itemInternal.FileCommitUrl,
+		XMLName:        itemInternal.XMLName,
+		UploadFileId:   itemInternal.UploadFileId,
+		Size:           itemInternal.Size,
+		FileUploadUrl:  itemInternal.FileUploadUrl,
+		FileCommitUrl:  itemInternal.FileCommitUrl,
 		FileDataExists: itemInternal.FileDataExists,
 	}, nil
 }

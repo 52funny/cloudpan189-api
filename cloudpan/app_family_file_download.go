@@ -31,10 +31,10 @@ func (p *PanClient) AppFamilyGetFileDownloadUrl(familyId int64, fileId string) (
 	dateOfGmt := apiutil.DateOfGmtStr()
 	fmt.Fprintf(fullUrl, "%s/family/file/getFileDownloadUrl.action?familyId=%d&fileId=%s&%s",
 		API_URL, familyId, fileId, apiutil.PcClientInfoSuffixParam())
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 	logger.Verboseln("do request url: " + fullUrl.String())
@@ -46,8 +46,8 @@ func (p *PanClient) AppFamilyGetFileDownloadUrl(familyId int64, fileId string) (
 	logger.Verboseln("response: " + string(body))
 
 	type fdUrl struct {
-		XMLName xml.Name `xml:"fileDownloadUrl"`
-		FileDownloadUrl string `xml:",innerxml"`
+		XMLName         xml.Name `xml:"fileDownloadUrl"`
+		FileDownloadUrl string   `xml:",innerxml"`
 	}
 
 	item := &fdUrl{}
@@ -69,10 +69,10 @@ func (p *PanClient) AppFamilyDownloadFileData(downloadFileUrl string, fileRange 
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := apiutil.XRequestId()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 

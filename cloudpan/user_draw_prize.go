@@ -17,9 +17,10 @@ package cloudpan
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
 	"github.com/tickstep/library-go/logger"
-	"strings"
 )
 
 type (
@@ -39,14 +40,14 @@ type (
 
 	UserDrawPrizeResult struct {
 		Success bool
-		Tip string
+		Tip     string
 	}
 
 	ActivityTaskId string
 )
 
 const (
-	ActivitySignin ActivityTaskId = "TASK_SIGNIN"
+	ActivitySignin     ActivityTaskId = "TASK_SIGNIN"
 	ActivitySignPhotos ActivityTaskId = "TASK_SIGNIN_PHOTOS"
 )
 

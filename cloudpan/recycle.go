@@ -62,9 +62,9 @@ type (
 		// PageSize 页大小，默认60
 		PageSize uint `json:"pageSize"`
 		// RecordCount 文件总数量
-		RecordCount uint `json:"recordCount"`
-		FamilyId int64 `json:"familyId"`
-		FamilyName string `json:"familyName"`
+		RecordCount uint   `json:"recordCount"`
+		FamilyId    int64  `json:"familyId"`
+		FamilyName  string `json:"familyName"`
 	}
 
 	RecycleFileActResult struct {
@@ -108,7 +108,7 @@ func (p *PanClient) RecycleDelete(familyId int64, fileIdList []string) *apierror
 	if fileIdList == nil {
 		return nil
 	}
-	if familyId <=0 {
+	if familyId <= 0 {
 		fmt.Fprintf(fullUrl, "%s/v2/deleteFile.action?fileIdList=%s",
 			WEB_URL, url.QueryEscape(strings.Join(fileIdList, ",")))
 	} else {
@@ -139,7 +139,7 @@ func (p *PanClient) RecycleRestore(fileList []*RecycleFileInfo) (taskId string, 
 	}
 
 	taskReqParam := &BatchTaskParam{
-		TypeFlag: BatchTaskTypeRecycleRestore,
+		TypeFlag:  BatchTaskTypeRecycleRestore,
 		TaskInfos: makeBatchTaskInfoList(fileList),
 	}
 	return p.CreateBatchTask(taskReqParam)
@@ -152,9 +152,9 @@ func makeBatchTaskInfoList(opFileList []*RecycleFileInfo) (infoList BatchTaskInf
 			isFolder = 1
 		}
 		infoItem := &BatchTaskInfo{
-			FileId: fe.FileId,
-			FileName: fe.FileName,
-			IsFolder: isFolder,
+			FileId:      fe.FileId,
+			FileName:    fe.FileName,
+			IsFolder:    isFolder,
 			SrcParentId: fe.ParentId,
 		}
 		infoList = append(infoList, infoItem)
@@ -164,7 +164,7 @@ func makeBatchTaskInfoList(opFileList []*RecycleFileInfo) (infoList BatchTaskInf
 
 func (p *PanClient) RecycleClear(familyId int64) *apierror.ApiError {
 	fullUrl := &strings.Builder{}
-	if familyId <=0 {
+	if familyId <= 0 {
 		fmt.Fprintf(fullUrl, "%s/v2/emptyRecycleBin.action",
 			WEB_URL)
 	} else {

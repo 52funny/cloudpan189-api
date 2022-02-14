@@ -67,16 +67,16 @@ type (
 	}
 
 	AppUploadFileCommitResult struct {
-		XMLName xml.Name `xml:"file"`
-		Id string `xml:"id"`
-		Name string `xml:"name"`
-		Size string `xml:"size"`
-		Md5 string `xml:"md5"`
-		CreateDate string `xml:"createDate"`
-		Rev string `xml:"rev"`
-		UserId string `xml:"userId"`
-		RequestId string `xml:"requestId"`
-		IsSafe string `xml:"isSafe"`
+		XMLName    xml.Name `xml:"file"`
+		Id         string   `xml:"id"`
+		Name       string   `xml:"name"`
+		Size       string   `xml:"size"`
+		Md5        string   `xml:"md5"`
+		CreateDate string   `xml:"createDate"`
+		Rev        string   `xml:"rev"`
+		UserId     string   `xml:"userId"`
+		RequestId  string   `xml:"requestId"`
+		IsSafe     string   `xml:"isSafe"`
 	}
 
 	AppGetUploadFileStatusResult struct {
@@ -84,10 +84,10 @@ type (
 		// 上传文件的ID
 		UploadFileId string `xml:"uploadFileId"`
 		// 已上传的大小
-		Size int64 `xml:"size"`
-		FileUploadUrl string `xml:"fileUploadUrl"`
-		FileCommitUrl string `xml:"fileCommitUrl"`
-		FileDataExists int `xml:"fileDataExists"`
+		Size           int64  `xml:"size"`
+		FileUploadUrl  string `xml:"fileUploadUrl"`
+		FileCommitUrl  string `xml:"fileCommitUrl"`
+		FileDataExists int    `xml:"fileDataExists"`
 	}
 )
 
@@ -97,26 +97,26 @@ func (p *PanClient) AppCreateUploadFile(param *AppCreateUploadFileParam) (*AppCr
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := apiutil.XRequestId()
 	appToken := p.appToken
-	headers := map[string]string {
+	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
 		"X-Request-ID": requestId,
 	}
-	formData := map[string]string {
+	formData := map[string]string{
 		"parentFolderId": param.ParentFolderId,
-		"baseFileId": "",
-		"fileName": param.FileName,
-		"size": strconv.FormatInt(param.Size, 10),
-		"md5": param.Md5,
-		"lastWrite": param.LastWrite,
-		"localPath": strings.ReplaceAll(param.LocalPath, "\\", "/"),
-		"opertype": "1",
-		"flag": "1",
-		"resumePolicy": "1",
-		"isLog": "0",
-		"fileExt": "",
+		"baseFileId":     "",
+		"fileName":       param.FileName,
+		"size":           strconv.FormatInt(param.Size, 10),
+		"md5":            param.Md5,
+		"lastWrite":      param.LastWrite,
+		"localPath":      strings.ReplaceAll(param.LocalPath, "\\", "/"),
+		"opertype":       "1",
+		"flag":           "1",
+		"resumePolicy":   "1",
+		"isLog":          "0",
+		"fileExt":        "",
 	}
 	logger.Verboseln("do request url: " + fullUrl)
 	body, err1 := p.client.Fetch(httpMethod, fullUrl, formData, headers)
@@ -146,16 +146,16 @@ func (p *PanClient) AppUploadFileData(uploadUrl, uploadFileId, xRequestId string
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := xRequestId
 	appToken := p.appToken
-	headers := map[string]string {
-		"Content-Type": "application/octet-stream",
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
-		"X-Request-ID": requestId,
-		"ResumePolicy": "1",
-		"Edrive-UploadFileId": uploadFileId,
+	headers := map[string]string{
+		"Content-Type":           "application/octet-stream",
+		"Date":                   dateOfGmt,
+		"SessionKey":             appToken.SessionKey,
+		"Signature":              apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
+		"X-Request-ID":           requestId,
+		"ResumePolicy":           "1",
+		"Edrive-UploadFileId":    uploadFileId,
 		"Edrive-UploadFileRange": "bytes=" + strconv.FormatInt(fileRange.Offset, 10) + "-" + strconv.FormatInt(fileRange.Len, 10),
-		"Expect": "100-continue",
+		"Expect":                 "100-continue",
 	}
 	logger.Verboseln("do request url: " + fullUrl)
 	resp, err1 := uploadFunc(httpMethod, fullUrl, headers)
@@ -190,22 +190,22 @@ func (p *PanClient) AppUploadFileCommitOverwrite(uploadCommitUrl, uploadFileId, 
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := xRequestId
 	appToken := p.appToken
-	headers := map[string]string {
+	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 	opertype := "1"
 	if overwrite {
 		opertype = "5"
 	}
-	formData := map[string]string {
+	formData := map[string]string{
 		"uploadFileId": uploadFileId,
-		"opertype": opertype,
+		"opertype":     opertype,
 		"ResumePolicy": "1",
-		"isLog": "0",
+		"isLog":        "0",
 	}
 	logger.Verboseln("do request url: " + fullUrl)
 	respBody, err1 := p.client.Fetch(httpMethod, fullUrl, formData, headers)
@@ -237,10 +237,10 @@ func (p *PanClient) AppGetUploadFileStatus(uploadFileId string) (*AppGetUploadFi
 	dateOfGmt := apiutil.DateOfGmtStr()
 	requestId := apiutil.XRequestId()
 	appToken := p.appToken
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl, dateOfGmt),
 		"X-Request-ID": requestId,
 	}
 	logger.Verboseln("do request url: " + fullUrl)

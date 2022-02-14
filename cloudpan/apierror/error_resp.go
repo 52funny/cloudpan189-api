@@ -19,7 +19,7 @@ import "encoding/xml"
 // ErrorResp 默认的错误信息
 type ErrorResp struct {
 	ErrorCode string `json:"errorCode"`
-	ErrorMsg string `json:"errorMsg"`
+	ErrorMsg  string `json:"errorMsg"`
 }
 
 type SuccessResp struct {
@@ -29,6 +29,6 @@ type SuccessResp struct {
 
 type AppErrorXmlResp struct {
 	XMLName xml.Name `xml:"error"`
-	Code string `xml:"code"`
-	Message string `xml:"message"`
+	Code    string   `xml:"code"`
+	Message string   `xml:"message"`
 }

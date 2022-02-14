@@ -17,14 +17,15 @@ package cloudpan
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
-	"github.com/tickstep/library-go/logger"
 	"math"
 	"net/url"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
+	"github.com/tickstep/library-go/logger"
 )
 
 type (
@@ -36,7 +37,7 @@ type (
 		// 家庭云ID
 		FamilyId int64
 		// FileId 文件ID，支持文件和文件夹
-		FileId   string
+		FileId string
 		// FilePath 文件绝对路径，支持文件和文件夹
 		FilePath string
 	}
@@ -44,21 +45,21 @@ type (
 	// AppGetFileInfoResult 文件信息响应值
 	AppGetFileInfoResult struct {
 		//XMLName xml.Name `xml:"folderInfo"`
-		FileId string `xml:"id"`
-		ParentId string `xml:"parentFolderId"`
-		FileName string `xml:"name"`
-		CreateDate string `xml:"createDate"`
-		LastOpTime string `xml:"lastOpTime"`
-		Path string `xml:"path"`
-		Rev string `xml:"rev"`
+		FileId           string               `xml:"id"`
+		ParentId         string               `xml:"parentFolderId"`
+		FileName         string               `xml:"name"`
+		CreateDate       string               `xml:"createDate"`
+		LastOpTime       string               `xml:"lastOpTime"`
+		Path             string               `xml:"path"`
+		Rev              string               `xml:"rev"`
 		ParentFolderList parentFolderListNode `xml:"parentFolderList"`
-		GroupSpaceId string `xml:"groupSpaceId"`
+		GroupSpaceId     string               `xml:"groupSpaceId"`
 	}
 	parentFolderListNode struct {
 		FolderList []appGetFolderInfoNode `xml:"folder"`
 	}
 	appGetFolderInfoNode struct {
-		Fid string `xml:"fid"`
+		Fid   string `xml:"fid"`
 		Fname string `xml:"fname"`
 	}
 
@@ -105,9 +106,9 @@ type (
 		// FileSize 文件大小
 		FileSize int64 `xml:"size"`
 		// LastOpTime 最后修改时间
-		LastOpTime string `xml:"lastOpTime"`
+		LastOpTime int64 `xml:"lastOpTime"`
 		// CreateTime 创建时间
-		CreateTime string `xml:"createDate"`
+		CreateTime int64 `xml:"createDate"`
 		// 文件完整路径
 		Path string `xml:"path"`
 		// MediaType 媒体类型
@@ -117,11 +118,11 @@ type (
 		// FileCount 文件夹子文件数量，对文件夹详情有效
 		SubFileCount uint `xml:"fileCount"`
 
-		StartLabel int `xml:"startLabel"`
-		FavoriteLabel int `xml:"favoriteLabel"`
-		Orientation int `xml:"orientation"`
-		Rev string `xml:"rev"`
-		FileCata int `xml:"fileCata"`
+		StartLabel    int    `xml:"startLabel"`
+		FavoriteLabel int    `xml:"favoriteLabel"`
+		Orientation   int    `xml:"orientation"`
+		Rev           string `xml:"rev"`
+		FileCata      int    `xml:"fileCata"`
 	}
 	AppFileList []*AppFileEntity
 )
@@ -162,10 +163,10 @@ func (p *PanClient) AppGetBasicFileInfo(param *AppGetFileInfoParam) (*AppGetFile
 	}
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 
@@ -193,13 +194,13 @@ func (p *PanClient) AppGetBasicFileInfo(param *AppGetFileInfoParam) (*AppGetFile
 		}
 	} else {
 		type familyAppGetFileInfoResult struct {
-			FileId string `xml:"id"`
-			ParentId string `xml:"parentId"`
-			FileName string `xml:"name"`
+			FileId     string `xml:"id"`
+			ParentId   string `xml:"parentId"`
+			FileName   string `xml:"name"`
 			CreateDate string `xml:"createDate"`
 			LastOpTime string `xml:"lastOpTime"`
-			Path string `xml:"path"`
-			Rev string `xml:"rev"`
+			Path       string `xml:"path"`
+			Rev        string `xml:"rev"`
 		}
 		fitem := &familyAppGetFileInfoResult{}
 		if err := xml.Unmarshal(respBody, fitem); err != nil {
@@ -207,12 +208,12 @@ func (p *PanClient) AppGetBasicFileInfo(param *AppGetFileInfoParam) (*AppGetFile
 			return nil, apierror.NewApiErrorWithError(err)
 		}
 		item = &AppGetFileInfoResult{
-			FileId: fitem.FileId,
-			ParentId: fitem.ParentId,
-			FileName: fitem.FileName,
+			FileId:     fitem.FileId,
+			ParentId:   fitem.ParentId,
+			FileName:   fitem.FileName,
 			CreateDate: fitem.CreateDate,
 			LastOpTime: fitem.LastOpTime,
-			Rev: fitem.Rev,
+			Rev:        fitem.Rev,
 		}
 	}
 
@@ -233,25 +234,24 @@ func getAppOrderBy(by OrderBy) AppOrderBy {
 }
 
 func NewAppFileListParam() *AppFileListParam {
-	return &AppFileListParam {
-		FamilyId: 0,
-		FileId: "-11",
-		OrderBy: OrderByName,
+	return &AppFileListParam{
+		FamilyId:  0,
+		FileId:    "-11",
+		OrderBy:   OrderByName,
 		OrderSort: OrderAsc,
-		PageNum: 1,
-		PageSize: 200,
+		PageNum:   1,
+		PageSize:  200,
 	}
 }
 
 func NewAppFileEntityForRootDir() *AppFileEntity {
-	return &AppFileEntity {
-		FileId: "-11",
+	return &AppFileEntity{
+		FileId:   "-11",
 		IsFolder: true,
 		FileName: "/",
 		ParentId: "",
 	}
 }
-
 
 // TotalSize 获取目录下文件的总大小
 func (afl AppFileList) TotalSize() int64 {
@@ -265,7 +265,6 @@ func (afl AppFileList) TotalSize() int64 {
 	}
 	return size
 }
-
 
 // Count 获取文件总数和目录总数
 func (afl AppFileList) Count() (fileN, directoryN int64) {
@@ -298,29 +297,29 @@ func (f *AppFileEntity) String() string {
 
 func (f *AppFileEntity) CreateFileEntity() *FileEntity {
 	return &FileEntity{
-		FileId: f.FileId,
-		ParentId: f.ParentId,
+		FileId:       f.FileId,
+		ParentId:     f.ParentId,
 		FileIdDigest: f.FileMd5,
-		FileName: f.FileName,
-		FileSize: f.FileSize,
-		LastOpTime: f.LastOpTime,
-		CreateTime: f.CreateTime,
-		Path: f.Path,
-		MediaType: f.MediaType,
-		IsFolder: f.IsFolder,
+		FileName:     f.FileName,
+		FileSize:     f.FileSize,
+		LastOpTime:   f.LastOpTime,
+		CreateTime:   f.CreateTime,
+		Path:         f.Path,
+		MediaType:    f.MediaType,
+		IsFolder:     f.IsFolder,
 		SubFileCount: f.SubFileCount,
 	}
 }
 
 // AppGetAllFileList 获取指定目录下的所有文件列表
-func (p *PanClient) AppGetAllFileList(param *AppFileListParam) (*AppFileListResult, *apierror.ApiError)  {
+func (p *PanClient) AppGetAllFileList(param *AppFileListParam) (*AppFileListResult, *apierror.ApiError) {
 	internalParam := &AppFileListParam{
-		FamilyId: param.FamilyId,
-		FileId: param.FileId,
-		OrderBy: param.OrderBy,
+		FamilyId:  param.FamilyId,
+		FileId:    param.FileId,
+		OrderBy:   param.OrderBy,
 		OrderSort: param.OrderSort,
-		PageNum: 1,
-		PageSize: param.PageSize,
+		PageNum:   1,
+		PageSize:  param.PageSize,
 	}
 	if internalParam.PageSize <= 0 {
 		internalParam.PageSize = 200
@@ -355,15 +354,15 @@ func (p *PanClient) AppGetAllFileList(param *AppFileListParam) (*AppFileListResu
 	}
 
 	// parentId
-	for _,fi := range result.FileList {
+	for _, fi := range result.FileList {
 		fi.ParentId = param.FileId
 	}
 
 	// construct path
 	if param.ConstructPath {
-		parentFullPath,err := p.AppFilePathById(param.FamilyId, param.FileId)
+		parentFullPath, err := p.AppFilePathById(param.FamilyId, param.FileId)
 		if err == nil {
-			for _,fi := range result.FileList {
+			for _, fi := range result.FileList {
 				fi.Path = parentFullPath + "/" + fi.FileName
 				fi.ParentId = param.FileId
 			}
@@ -401,10 +400,10 @@ func (p *PanClient) AppFileList(param *AppFileListParam) (*AppFileListResult, *a
 	}
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 
@@ -447,20 +446,20 @@ func (p *PanClient) AppFileList(param *AppFileListParam) (*AppFileListResult, *a
 	}
 
 	result := &AppFileListResult{
-		LastRev: itemResult.LastRev,
-		Count: itemResult.Count,
+		LastRev:  itemResult.LastRev,
+		Count:    itemResult.Count,
 		FileList: AppFileList{},
 	}
 
 	if itemResult.FolderList != nil && len(itemResult.FolderList) > 0 {
-		for _,item := range itemResult.FolderList {
+		for _, item := range itemResult.FolderList {
 			item.IsFolder = true
 
 			result.FileList = append(result.FileList, item)
 		}
 	}
 	if itemResult.FileList != nil && len(itemResult.FileList) > 0 {
-		for _,item := range itemResult.FileList {
+		for _, item := range itemResult.FileList {
 			item.IsFolder = false
 
 			result.FileList = append(result.FileList, item)
@@ -474,12 +473,12 @@ func (p *PanClient) AppFileList(param *AppFileListParam) (*AppFileListResult, *a
 func (p *PanClient) AppFilePathById(familyId int64, fileId string) (string, *apierror.ApiError) {
 	param := &AppGetFileInfoParam{
 		FamilyId: familyId,
-		FileId: fileId,
+		FileId:   fileId,
 	}
 
 	fullPath := ""
 	for {
-		fi,err := p.AppGetBasicFileInfo(param)
+		fi, err := p.AppGetBasicFileInfo(param)
 		if err != nil {
 			return "", err
 		}
@@ -522,7 +521,7 @@ func (p *PanClient) AppFileInfoById(familyId int64, fileId string) (fileInfo *Ap
 		return nil, err1
 	}
 
-	for _,item := range allFileInfo.FileList {
+	for _, item := range allFileInfo.FileList {
 		if item.FileId == fileId {
 			return item, nil
 		}
@@ -555,7 +554,7 @@ func (p *PanClient) AppFileInfoByPath(familyId int64, pathStr string) (fileInfo 
 	return p.getAppFileInfoByPath(familyId, 0, &pathSlice, nil)
 }
 
-func (p *PanClient) getAppFileInfoByPath(familyId int64, index int, pathSlice *[]string, parentFileInfo *AppFileEntity) (*AppFileEntity, *apierror.ApiError)  {
+func (p *PanClient) getAppFileInfoByPath(familyId int64, index int, pathSlice *[]string, parentFileInfo *AppFileEntity) (*AppFileEntity, *apierror.ApiError) {
 	if parentFileInfo == nil {
 		// default root "/" entity
 		parentFileInfo = NewAppFileEntityForRootDir()
@@ -564,7 +563,7 @@ func (p *PanClient) getAppFileInfoByPath(familyId int64, index int, pathSlice *[
 			return parentFileInfo, nil
 		}
 
-		return p.getAppFileInfoByPath(familyId, index + 1, pathSlice, parentFileInfo)
+		return p.getAppFileInfoByPath(familyId, index+1, pathSlice, parentFileInfo)
 	}
 
 	if index >= len(*pathSlice) {
@@ -579,14 +578,14 @@ func (p *PanClient) getAppFileInfoByPath(familyId int64, index int, pathSlice *[
 		return nil, err
 	}
 
-	if fileResult == nil || fileResult.FileList == nil || len(fileResult.FileList) == 0  {
+	if fileResult == nil || fileResult.FileList == nil || len(fileResult.FileList) == 0 {
 		return nil, apierror.NewApiError(apierror.ApiCodeFileNotFoundCode, "文件不存在")
 	}
 	for _, fileEntity := range fileResult.FileList {
 		if fileEntity.FileName == (*pathSlice)[index] {
 			fileEntity.ParentId = parentFileInfo.FileId
 			fileEntity.Path = getPath(index, pathSlice)
-			return p.getAppFileInfoByPath(familyId, index + 1, pathSlice, fileEntity)
+			return p.getAppFileInfoByPath(familyId, index+1, pathSlice, fileEntity)
 		}
 	}
 	return nil, apierror.NewApiError(apierror.ApiCodeFileNotFoundCode, "文件不存在")
@@ -602,8 +601,6 @@ func getPath(index int, pathSlice *[]string) string {
 	}
 	return strings.ReplaceAll(fullPath, "//", "/")
 }
-
-
 
 // FilesDirectoriesRecurseList 递归获取目录下的文件和目录列表
 func (p *PanClient) AppFilesDirectoriesRecurseList(familyId int64, path string, handleAppFileDirectoryFunc HandleAppFileDirectoryFunc) AppFileList {

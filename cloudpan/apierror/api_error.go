@@ -48,11 +48,11 @@ type ApiCode int
 
 type ApiError struct {
 	Code ApiCode
-	Err string
+	Err  string
 }
 
 func NewApiError(code ApiCode, err string) *ApiError {
-	return &ApiError {
+	return &ApiError{
 		code,
 		err,
 	}
@@ -88,7 +88,7 @@ func (a *ApiError) ErrCode() ApiCode {
 }
 
 // ParseAppCommonApiError 解析公共错误，如果没有错误则返回nil
-func ParseAppCommonApiError(data []byte) *ApiError  {
+func ParseAppCommonApiError(data []byte) *ApiError {
 	errResp := &AppErrorXmlResp{}
 	if err := xml.Unmarshal(data, errResp); err == nil {
 		if errResp.Code != "" {

@@ -16,9 +16,10 @@ package cloudpan
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
 	"github.com/tickstep/library-go/logger"
-	"strings"
 )
 
 type (

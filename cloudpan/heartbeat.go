@@ -24,7 +24,7 @@ type heartBeatResp struct {
 }
 
 // Heartbeat WEB端心跳包，周期默认1分钟
-func (p *PanClient) Heartbeat() bool  {
+func (p *PanClient) Heartbeat() bool {
 	url := WEB_URL + "/heartbeat.action"
 	body, err := p.client.DoGet(url)
 	if err != nil {

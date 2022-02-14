@@ -45,10 +45,10 @@ func (p *PanClient) appRenameFileInternal(renameFileId, newName string, isFolder
 	httpMethod := "POST"
 	dateOfGmt := apiutil.DateOfGmtStr()
 	appToken := p.appToken
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 	logger.Verboseln("do request url: " + fullUrl.String())

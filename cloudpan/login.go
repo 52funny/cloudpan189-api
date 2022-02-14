@@ -42,15 +42,15 @@ const (
 type (
 	loginParams struct {
 		CaptchaToken string
-		Lt string
-		ReturnUrl string
-		ParamId string
+		Lt           string
+		ReturnUrl    string
+		ParamId      string
 	}
 
 	loginResult struct {
-		Result int `json:"result"`
-		Msg string `json:"msg"`
-		ToUrl string `json:"toUrl"`
+		Result int    `json:"result"`
+		Msg    string `json:"msg"`
+		ToUrl  string `json:"toUrl"`
 	}
 
 	WebLoginToken struct {
@@ -101,7 +101,7 @@ func LoginWithCaptcha(username, password, captchaCode string) (webToken *WebLogi
 		return webToken, apierror.NewFailedApiError(err.Error())
 	}
 	// request toUrl to get COOKIE_LOGIN_USER cookie
-	header := map[string]string {
+	header := map[string]string{
 		"lt":           latestLoginParams.Lt,
 		"Content-Type": "application/x-www-form-urlencoded",
 		"Referer":      "https://open.e.189.cn/",
@@ -111,7 +111,7 @@ func LoginWithCaptcha(username, password, captchaCode string) (webToken *WebLogi
 	cloudpanUrl := &url.URL{
 		Scheme: "http",
 		Host:   "cloud.189.cn",
-		Path: "/",
+		Path:   "/",
 	}
 	cks := client.Jar.Cookies(cloudpanUrl)
 	for _, cookie := range cks {
@@ -136,10 +136,10 @@ func GetCaptchaImage() (savePath string, error *apierror.ApiError) {
 }
 
 func getLoginParams() (params loginParams, error *apierror.ApiError) {
-	header := map[string]string {
+	header := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
-	data, err := client.Fetch("GET", WEB_URL+ "/udb/udb_login.jsp?pageId=1&redirectURL=/main.action",
+	data, err := client.Fetch("GET", WEB_URL+"/udb/udb_login.jsp?pageId=1&redirectURL=/main.action",
 		nil, header)
 	if err != nil {
 		logger.Verboseln("login redirectURL occurs error: ", err.Error())
@@ -167,15 +167,15 @@ func checkNeedCaptchaCodeOrNot(username, lt string) (error *apierror.ApiError) {
 	if err != nil {
 		return apierror.NewApiErrorWithError(err)
 	}
-	postData := map[string]string {
+	postData := map[string]string{
 		"accountType": "01",
-		"userName": "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsa))),
-		"appKey": "cloud",
+		"userName":    "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsa))),
+		"appKey":      "cloud",
 	}
-	header := map[string]string {
-		"lt": lt,
+	header := map[string]string{
+		"lt":           lt,
 		"Content-Type": "application/x-www-form-urlencoded",
-		"Referer": "https://open.e.189.cn/",
+		"Referer":      "https://open.e.189.cn/",
 	}
 	body, err := client.Fetch("POST", url, postData, header)
 	if err != nil {
@@ -218,21 +218,21 @@ func doLoginAct(username, password, validateCode, captchaToken, returnUrl, param
 	url := AUTH_URL + "/loginSubmit.do"
 	rsaUserName, _ := crypto.RsaEncrypt([]byte(apiutil.RsaPublicKey), []byte(username))
 	rsaPassword, _ := crypto.RsaEncrypt([]byte(apiutil.RsaPublicKey), []byte(password))
-	data := map[string]string {
-		"appKey": "cloud",
-		"accountType": "01",
-		"userName": "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsaUserName))),
-		"password": "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsaPassword))),
+	data := map[string]string{
+		"appKey":       "cloud",
+		"accountType":  "01",
+		"userName":     "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsaUserName))),
+		"password":     "{RSA}" + apiutil.B64toHex(string(crypto.Base64Encode(rsaPassword))),
 		"validateCode": validateCode,
 		"captchaToken": captchaToken,
-		"returnUrl": returnUrl,
-		"mailSuffix": "@189.cn",
-		"paramId": paramId,
+		"returnUrl":    returnUrl,
+		"mailSuffix":   "@189.cn",
+		"paramId":      paramId,
 	}
-	header := map[string]string {
-		"lt": lt,
+	header := map[string]string{
+		"lt":           lt,
 		"Content-Type": "application/x-www-form-urlencoded",
-		"Referer": "https://open.e.189.cn/",
+		"Referer":      "https://open.e.189.cn/",
 	}
 
 	body, err := client.Fetch("POST", url, data, header)
@@ -255,12 +255,12 @@ func buildCookie(cookieMap map[string]string) []*http.Cookie {
 	}
 
 	c := make([]*http.Cookie, 0, 0)
-	for k,v := range cookieMap {
+	for k, v := range cookieMap {
 		c = append(c,
 			&http.Cookie{
-				Name: k,
+				Name:  k,
 				Value: v,
-				Path: "/",
+				Path:  "/",
 			})
 	}
 	return c
@@ -269,7 +269,7 @@ func buildCookie(cookieMap map[string]string) []*http.Cookie {
 func RefreshCookieToken(sessionKey string) string {
 	client := requester.NewHTTPClient()
 
-	header := map[string]string {
+	header := map[string]string{
 		"Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7",
 	}
 

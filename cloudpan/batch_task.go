@@ -40,26 +40,26 @@ type (
 
 	// BatchTaskParam 任务参数
 	BatchTaskParam struct {
-		TypeFlag BatchTaskType `json:"type"`
-		TaskInfos BatchTaskInfoList `json:"taskInfos"`
-		TargetFolderId string `json:"targetFolderId"`
-		ShareId int64 `json:"shareId"`
+		TypeFlag       BatchTaskType     `json:"type"`
+		TaskInfos      BatchTaskInfoList `json:"taskInfos"`
+		TargetFolderId string            `json:"targetFolderId"`
+		ShareId        int64             `json:"shareId"`
 	}
 
-    // CheckTaskResult 检查任务结果
+	// CheckTaskResult 检查任务结果
 	CheckTaskResult struct {
-		FailedCount int `json:"failedCount" xml:"failedCount"`
-		SkipCount int `json:"skipCount" xml:"skipCount"`
-		SubTaskCount int `json:"subTaskCount" xml:"subTaskCount"`
-		SuccessedCount int `json:"successedCount" xml:"successedCount"`
+		FailedCount         int     `json:"failedCount" xml:"failedCount"`
+		SkipCount           int     `json:"skipCount" xml:"skipCount"`
+		SubTaskCount        int     `json:"subTaskCount" xml:"subTaskCount"`
+		SuccessedCount      int     `json:"successedCount" xml:"successedCount"`
 		SuccessedFileIdList []int64 `json:"successedFileIdList" xml:"successedFileIdList"`
-		TaskId string `json:"taskId" xml:"taskId"`
+		TaskId              string  `json:"taskId" xml:"taskId"`
 		// TaskStatus 任务状态， 4-成功
 		TaskStatus BatchTaskStatus `json:"taskStatus" xml:"taskStatus"`
 	}
 
 	BatchTaskStatus int
-	BatchTaskType string
+	BatchTaskType   string
 )
 
 const (
@@ -82,21 +82,21 @@ const (
 	BatchTaskTypeShareSave BatchTaskType = "SHARE_SAVE"
 )
 
-func (p *PanClient) CreateBatchTask (param *BatchTaskParam) (taskId string, error *apierror.ApiError) {
+func (p *PanClient) CreateBatchTask(param *BatchTaskParam) (taskId string, error *apierror.ApiError) {
 	fullUrl := &strings.Builder{}
 	fmt.Fprintf(fullUrl, "%s/createBatchTask.action", WEB_URL)
 	logger.Verboseln("do request url: " + fullUrl.String())
 	taskInfosStr, err := json.Marshal(param.TaskInfos)
 	var postData map[string]string
 	if BatchTaskTypeDelete == param.TypeFlag || BatchTaskTypeRecycleRestore == param.TypeFlag {
-		postData = map[string]string {
-			"type": string(param.TypeFlag),
+		postData = map[string]string{
+			"type":      string(param.TypeFlag),
 			"taskInfos": string(taskInfosStr),
 		}
 	} else if BatchTaskTypeCopy == param.TypeFlag || BatchTaskTypeMove == param.TypeFlag {
-		postData = map[string]string {
-			"type": string(param.TypeFlag),
-			"taskInfos": string(taskInfosStr),
+		postData = map[string]string{
+			"type":           string(param.TypeFlag),
+			"taskInfos":      string(taskInfosStr),
 			"targetFolderId": param.TargetFolderId,
 		}
 	} else if BatchTaskTypeShareSave == param.TypeFlag {
@@ -109,19 +109,19 @@ func (p *PanClient) CreateBatchTask (param *BatchTaskParam) (taskId string, erro
 			IsFolder int `json:"isFolder"`
 		}
 		tsl := []*batchTaskShareSaveInfo{}
-		for _,item := range param.TaskInfos {
+		for _, item := range param.TaskInfos {
 			tsl = append(tsl, &batchTaskShareSaveInfo{
-				FileId: item.FileId,
+				FileId:   item.FileId,
 				FileName: item.FileName,
 				IsFolder: item.IsFolder,
 			})
 		}
 		taskInfosStr, _ = json.Marshal(tsl)
-		postData = map[string]string {
-			"type": string(param.TypeFlag),
-			"taskInfos": string(taskInfosStr),
+		postData = map[string]string{
+			"type":           string(param.TypeFlag),
+			"taskInfos":      string(taskInfosStr),
 			"targetFolderId": param.TargetFolderId,
-			"shareId": strconv.FormatInt(param.ShareId, 10),
+			"shareId":        strconv.FormatInt(param.ShareId, 10),
 		}
 	} else {
 		return "", apierror.NewFailedApiError("不支持的操作")
@@ -142,12 +142,12 @@ func (p *PanClient) CreateBatchTask (param *BatchTaskParam) (taskId string, erro
 	return strings.ReplaceAll(string(body), "\"", ""), nil
 }
 
-func (p *PanClient) CheckBatchTask (typeFlag BatchTaskType, taskId string) (result *CheckTaskResult, error *apierror.ApiError) {
+func (p *PanClient) CheckBatchTask(typeFlag BatchTaskType, taskId string) (result *CheckTaskResult, error *apierror.ApiError) {
 	fullUrl := &strings.Builder{}
 	fmt.Fprintf(fullUrl, "%s/checkBatchTask.action", WEB_URL)
 	logger.Verboseln("do request url: " + fullUrl.String())
-	postData := map[string]string {
-		"type": string(typeFlag),
+	postData := map[string]string{
+		"type":   string(typeFlag),
 		"taskId": taskId,
 	}
 	body, err := p.client.DoPost(fullUrl.String(), postData)

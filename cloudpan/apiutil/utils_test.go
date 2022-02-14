@@ -33,7 +33,7 @@ func TestB64toHex(t *testing.T) {
 func TestNoCache(t *testing.T) {
 	noCache := noCache()
 	fmt.Println(noCache)
-	assert.Equal(t, len("0.") + 17, len(noCache))
+	assert.Equal(t, len("0.")+17, len(noCache))
 }
 
 func TestTimestampe(t *testing.T) {
@@ -43,10 +43,10 @@ func TestTimestampe(t *testing.T) {
 }
 
 func TestSignatureOfMd5(t *testing.T) {
-	params := map[string]string {
-		"Timestamp": "1593905856153",
+	params := map[string]string{
+		"Timestamp":  "1593905856153",
 		"sessionKey": "c99af8b0-cee7-46b8-8fe8-f11ff69417f8",
-		"AppKey": "601102120",
+		"AppKey":     "601102120",
 	}
 	r := SignatureOfMd5(params)
 	fmt.Println(r)

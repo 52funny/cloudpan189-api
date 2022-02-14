@@ -63,10 +63,10 @@ func (p *PanClient) AppMkdir(familyId int64, parentFileId, dirName string) (*App
 	}
 	httpMethod := "POST"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 
@@ -84,7 +84,6 @@ func (p *PanClient) AppMkdir(familyId int64, parentFileId, dirName string) (*App
 	return item, nil
 }
 
-
 func (p *PanClient) AppMkdirRecursive(familyId int64, parentFileId string, fullPath string, index int, pathSlice []string) (*AppMkdirResult, *apierror.ApiError) {
 	r := &AppMkdirResult{}
 	if familyId == 0 {
@@ -98,7 +97,7 @@ func (p *PanClient) AppMkdirRecursive(familyId int64, parentFileId string, fullP
 			}
 
 			fullPath = ""
-			return p.AppMkdirRecursive(familyId, parentFileId, fullPath, index + 1, pathSlice)
+			return p.AppMkdirRecursive(familyId, parentFileId, fullPath, index+1, pathSlice)
 		}
 	}
 
@@ -119,7 +118,7 @@ func (p *PanClient) AppMkdirRecursive(familyId int64, parentFileId string, fullP
 	// existed?
 	for _, fileEntity := range fileResult.FileList {
 		if fileEntity.FileName == pathSlice[index] {
-			return p.AppMkdirRecursive(familyId, fileEntity.FileId, fullPath + "/" + pathSlice[index], index + 1, pathSlice)
+			return p.AppMkdirRecursive(familyId, fileEntity.FileId, fullPath+"/"+pathSlice[index], index+1, pathSlice)
 		}
 	}
 
@@ -141,10 +140,9 @@ func (p *PanClient) AppMkdirRecursive(familyId int64, parentFileId string, fullP
 		return r, err
 	}
 
-	if (index+1) >= len(pathSlice) {
+	if (index + 1) >= len(pathSlice) {
 		return rs, nil
 	} else {
-		return p.AppMkdirRecursive(familyId, rs.FileId, fullPath + "/" + pathSlice[index], index + 1, pathSlice)
+		return p.AppMkdirRecursive(familyId, rs.FileId, fullPath+"/"+pathSlice[index], index+1, pathSlice)
 	}
 }
-

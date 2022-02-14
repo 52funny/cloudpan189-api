@@ -24,7 +24,6 @@ import (
 	"strings"
 )
 
-
 // AppFamilyMoveFile 移动文件/文件夹
 func (p *PanClient) AppFamilyMoveFile(familyId int64, fileId string, destParentId string) (*AppFileEntity, *apierror.ApiError) {
 	fullUrl := &strings.Builder{}
@@ -35,10 +34,10 @@ func (p *PanClient) AppFamilyMoveFile(familyId int64, fileId string, destParentI
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 

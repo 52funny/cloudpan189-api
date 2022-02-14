@@ -17,11 +17,12 @@ package cloudpan
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/library-go/logger"
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/library-go/logger"
 )
 
 type (
@@ -29,7 +30,7 @@ type (
 	HandleFileDirectoryFunc func(depth int, fdPath string, fd *FileEntity, apierr *apierror.ApiError) bool
 
 	MediaType uint
-	OrderBy uint
+	OrderBy   uint
 	OrderSort string
 
 	// FileListParam 文件列表参数
@@ -88,9 +89,9 @@ type (
 		// FileSize 文件大小，文件夹为0
 		FileSize int64 `json:"fileSize"`
 		// LastOpTime 最后修改时间
-		LastOpTime string `json:"lastOpTime"`
+		LastOpTime int64 `json:"lastOpTime"`
 		// CreateTime 创建时间
-		CreateTime string `json:"createTime"`
+		CreateTime int64 `json:"createTime"`
 		// FilePath 文件的完整路径
 		Path string `json:"path"`
 		// MediaType 媒体类型
@@ -116,43 +117,41 @@ type (
 		// IsCoShare ???
 		IsCoShare uint `json:"isCoShare"`
 	}
-
-
 )
 
 // NewFileSearchParam 创建默认搜索参数
 func NewFileSearchParam() *FileSearchParam {
 	flp := NewFileListParam()
-	return &FileSearchParam {
+	return &FileSearchParam{
 		FileListParam{
-			FileId: flp.FileId,
-			MediaType: flp.MediaType,
+			FileId:       flp.FileId,
+			MediaType:    flp.MediaType,
 			InGroupSpace: flp.InGroupSpace,
-			OrderBy: flp.OrderBy,
-			OrderSort: flp.OrderSort,
-			PageNum: flp.PageNum,
-			PageSize: flp.PageSize,
+			OrderBy:      flp.OrderBy,
+			OrderSort:    flp.OrderSort,
+			PageNum:      flp.PageNum,
+			PageSize:     flp.PageSize,
 		},
 		"",
 	}
 }
 
 func NewFileListParam() *FileListParam {
-	return &FileListParam {
-		FileId: "-11",
-		MediaType: MediaTypeDefault,
+	return &FileListParam{
+		FileId:       "-11",
+		MediaType:    MediaTypeDefault,
 		InGroupSpace: false,
-		OrderBy: OrderByName,
-		OrderSort: OrderAsc,
-		PageNum: 1,
-		PageSize: 60,
+		OrderBy:      OrderByName,
+		OrderSort:    OrderAsc,
+		PageNum:      1,
+		PageSize:     60,
 	}
 }
 
 // NewFileEntityForRootDir 创建根目录"/"的默认文件信息
 func NewFileEntityForRootDir() *FileEntity {
-	return &FileEntity {
-		FileId: "-11",
+	return &FileEntity{
+		FileId:   "-11",
 		IsFolder: true,
 		FileName: "/",
 		ParentId: "",
@@ -182,8 +181,6 @@ const (
 	OrderDesc OrderSort = "DESC"
 )
 
-
-
 // TotalSize 获取目录下文件的总大小
 func (fl FileList) TotalSize() int64 {
 	var size int64
@@ -196,7 +193,6 @@ func (fl FileList) TotalSize() int64 {
 	}
 	return size
 }
-
 
 // Count 获取文件总数和目录总数
 func (fl FileList) Count() (fileN, directoryN int64) {
@@ -228,16 +224,16 @@ func (f *FileEntity) String() string {
 
 func (f *FileEntity) CreateFileEntity() *AppFileEntity {
 	return &AppFileEntity{
-		FileId: f.FileId,
-		ParentId: f.ParentId,
-		FileMd5: f.FileIdDigest,
-		FileName: f.FileName,
-		FileSize: f.FileSize,
-		LastOpTime: f.LastOpTime,
-		CreateTime: f.CreateTime,
-		Path: f.Path,
-		MediaType: f.MediaType,
-		IsFolder: f.IsFolder,
+		FileId:       f.FileId,
+		ParentId:     f.ParentId,
+		FileMd5:      f.FileIdDigest,
+		FileName:     f.FileName,
+		FileSize:     f.FileSize,
+		LastOpTime:   f.LastOpTime,
+		CreateTime:   f.CreateTime,
+		Path:         f.Path,
+		MediaType:    f.MediaType,
+		IsFolder:     f.IsFolder,
 		SubFileCount: f.SubFileCount,
 	}
 }
@@ -285,7 +281,7 @@ func (p *PanClient) FileSearch(param *FileSearchParam) (result *FileSearchResult
 	if param.MediaType != 0 {
 		md = strconv.Itoa(int(param.MediaType))
 	}
-	fmt.Fprintf(fullUrl, "%s/v2/listFiles.action?fileId=%s&mediaType=%s&keyword=%s&inGroupSpace=%t&orderBy=%d&order=%s&pageNum=%d&pageSize=%d",
+	fmt.Fprintf(fullUrl, "%s/api/portal/listFiles.action?fileId=%s&mediaType=%s&keyword=%s&inGroupSpace=%t&orderBy=%d&order=%s&pageNum=%d&pageSize=%d",
 		WEB_URL, param.FileId, md, param.Keyword, param.InGroupSpace, param.OrderBy, param.OrderSort,
 		param.PageNum, param.PageSize)
 	logger.Verboseln("do request url: " + fullUrl.String())
@@ -344,7 +340,7 @@ func (p *PanClient) FileInfoByPath(pathStr string) (fileInfo *FileEntity, error 
 	return p.getFileInfoByPath(0, &pathSlice, nil)
 }
 
-func (p *PanClient) getFileInfoByPath(index int, pathSlice *[]string, parentFileInfo *FileEntity) (*FileEntity, *apierror.ApiError)  {
+func (p *PanClient) getFileInfoByPath(index int, pathSlice *[]string, parentFileInfo *FileEntity) (*FileEntity, *apierror.ApiError) {
 	if parentFileInfo == nil {
 		// default root "/" entity
 		parentFileInfo = NewFileEntityForRootDir()
@@ -353,7 +349,7 @@ func (p *PanClient) getFileInfoByPath(index int, pathSlice *[]string, parentFile
 			return parentFileInfo, nil
 		}
 
-		return p.getFileInfoByPath(index + 1, pathSlice, parentFileInfo)
+		return p.getFileInfoByPath(index+1, pathSlice, parentFileInfo)
 	}
 
 	if index >= len(*pathSlice) {
@@ -366,13 +362,12 @@ func (p *PanClient) getFileInfoByPath(index int, pathSlice *[]string, parentFile
 	if err != nil {
 		return nil, err
 	}
-
 	if fileResult == nil || fileResult.Data == nil || len(fileResult.Data) == 0 {
 		return nil, apierror.NewApiError(apierror.ApiCodeFileNotFoundCode, "文件不存在")
 	}
 	for _, fileEntity := range fileResult.Data {
 		if fileEntity.FileName == (*pathSlice)[index] {
-			return p.getFileInfoByPath(index + 1, pathSlice, fileEntity)
+			return p.getFileInfoByPath(index+1, pathSlice, fileEntity)
 		}
 	}
 	return nil, apierror.NewApiError(apierror.ApiCodeFileNotFoundCode, "文件不存在")

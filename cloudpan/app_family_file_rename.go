@@ -35,10 +35,10 @@ func (p *PanClient) AppFamilyRenameFile(familyId int64, renameFileId, newName st
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 

@@ -17,12 +17,13 @@ package cloudpan
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
-	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
-	"github.com/tickstep/library-go/logger"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/tickstep/cloudpan189-api/cloudpan/apierror"
+	"github.com/tickstep/cloudpan189-api/cloudpan/apiutil"
+	"github.com/tickstep/library-go/logger"
 )
 
 type (
@@ -43,10 +44,10 @@ func (p *PanClient) AppGetFileDownloadUrl(fileId string) (string, *apierror.ApiE
 	dateOfGmt := apiutil.DateOfGmtStr()
 	fmt.Fprintf(fullUrl, "%s/getFileDownloadUrl.action?fileId=%s&dt=3&flag=1&%s",
 		API_URL, fileId, apiutil.PcClientInfoSuffixParam())
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 	logger.Verboseln("do request url: " + fullUrl.String())
@@ -63,8 +64,8 @@ func (p *PanClient) AppGetFileDownloadUrl(fileId string) (string, *apierror.ApiE
 	}
 
 	type fdUrl struct {
-		XMLName xml.Name `xml:"fileDownloadUrl"`
-		FileDownloadUrl string `xml:",innerxml"`
+		XMLName         xml.Name `xml:"fileDownloadUrl"`
+		FileDownloadUrl string   `xml:",innerxml"`
 	}
 
 	item := &fdUrl{}
@@ -82,10 +83,10 @@ func (p *PanClient) AppDownloadFileData(downloadFileUrl string, fileRange AppFil
 	dateOfGmt := apiutil.DateOfGmtStr()
 	fmt.Fprintf(fullUrl, "%s&%s",
 		downloadFileUrl, apiutil.PcClientInfoSuffixParam())
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": appToken.SessionKey,
-		"Signature": apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   appToken.SessionKey,
+		"Signature":    apiutil.SignatureOfHmac(appToken.SessionSecret, appToken.SessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 	// 支持断点续传

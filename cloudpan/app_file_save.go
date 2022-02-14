@@ -30,8 +30,8 @@ func (p *PanClient) AppFamilySaveFileToPersonCloud(familyId int64, familyFileIdL
 	}
 
 	fileIdStrList := []string{}
-	for _,item := range familyFileIdList {
-		fileIdStrList = append(fileIdStrList, "fileIdList=" + item)
+	for _, item := range familyFileIdList {
+		fileIdStrList = append(fileIdStrList, "fileIdList="+item)
 	}
 	fileIdListStr := strings.Join(fileIdStrList, "&")
 
@@ -46,10 +46,10 @@ func (p *PanClient) AppFamilySaveFileToPersonCloud(familyId int64, familyFileIdL
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 
@@ -73,7 +73,6 @@ func (p *PanClient) AppFamilySaveFileToPersonCloud(familyId int64, familyFileIdL
 	return true, nil
 }
 
-
 // AppSaveFileToFamilyCloud 复制个人云文件文件到家庭云
 func (p *PanClient) AppSaveFileToFamilyCloud(familyId int64, personFileIdList []string) (bool, *apierror.ApiError) {
 	if len(personFileIdList) == 0 {
@@ -81,8 +80,8 @@ func (p *PanClient) AppSaveFileToFamilyCloud(familyId int64, personFileIdList []
 	}
 
 	fileIdStrList := []string{}
-	for _,item := range personFileIdList {
-		fileIdStrList = append(fileIdStrList, "fileIdList=" + item)
+	for _, item := range personFileIdList {
+		fileIdStrList = append(fileIdStrList, "fileIdList="+item)
 	}
 	fileIdListStr := strings.Join(fileIdStrList, "&")
 
@@ -97,10 +96,10 @@ func (p *PanClient) AppSaveFileToFamilyCloud(familyId int64, personFileIdList []
 	sessionSecret := p.appToken.FamilySessionSecret
 	httpMethod := "GET"
 	dateOfGmt := apiutil.DateOfGmtStr()
-	headers := map[string]string {
-		"Date": dateOfGmt,
-		"SessionKey": sessionKey,
-		"Signature": apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
+	headers := map[string]string{
+		"Date":         dateOfGmt,
+		"SessionKey":   sessionKey,
+		"Signature":    apiutil.SignatureOfHmac(sessionSecret, sessionKey, httpMethod, fullUrl.String(), dateOfGmt),
 		"X-Request-ID": apiutil.XRequestId(),
 	}
 
