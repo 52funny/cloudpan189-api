@@ -15,9 +15,10 @@
 package cloudpan
 
 import (
-	"github.com/tickstep/library-go/requester"
 	"net/http"
 	"net/url"
+
+	"github.com/tickstep/library-go/requester"
 )
 
 const (
@@ -44,7 +45,7 @@ func NewPanClient(webToken WebLoginToken, appToken AppLoginToken) *PanClient {
 	client := requester.NewHTTPClient()
 	client.ResetCookiejar()
 	client.Jar.SetCookies(cloudpanDomainUrl, []*http.Cookie{
-		&http.Cookie{
+		{
 			Name:   "COOKIE_LOGIN_USER",
 			Value:  webToken.CookieLoginUser,
 			Domain: "cloud.189.cn",

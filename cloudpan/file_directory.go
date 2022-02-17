@@ -107,6 +107,11 @@ type (
 		DownloadUrl string `json:"downloadUrl"`
 		// IsStarred 是否是星标文件
 		IsStarred bool `json:"isStarred"`
+		Icon      `json:"icon"`
+	}
+	Icon struct {
+		LargeURL string `json:"largeUrl"`
+		SmallURL string `json:"smallUrl"`
 	}
 
 	PathEntity struct {
@@ -209,28 +214,31 @@ func (fl FileList) Count() (fileN, directoryN int64) {
 	}
 	return
 }
-func (f *FileEntity) String() string {
-	builder := &strings.Builder{}
-	builder.WriteString("文件ID: " + f.FileId + "\n")
-	builder.WriteString("文件名: " + f.FileName + "\n")
-	if f.IsFolder {
-		builder.WriteString("文件类型: 目录\n")
-	} else {
-		builder.WriteString("文件类型: 文件\n")
-	}
-	builder.WriteString("文件路径: " + f.Path + "\n")
-	return builder.String()
-}
+
+// func (f *FileEntity) String() string {
+// 	builder := &strings.Builder{}
+// 	builder.WriteString("文件ID: " + f.FileId + "\n")
+// 	builder.WriteString("文件名: " + f.FileName + "\n")
+// 	if f.IsFolder {
+// 		builder.WriteString("文件类型: 目录\n")
+// 	} else {
+// 		builder.WriteString("文件类型: 文件\n")
+// 	}
+// 	builder.WriteString("文件路径: " + f.Path + "\n")
+// 	return builder.String()
+// }
 
 func (f *FileEntity) CreateFileEntity() *AppFileEntity {
+	lastOpTime := strconv.FormatInt(f.LastOpTime, 10)
+	createTime := strconv.FormatInt(f.CreateTime, 10)
 	return &AppFileEntity{
 		FileId:       f.FileId,
 		ParentId:     f.ParentId,
 		FileMd5:      f.FileIdDigest,
 		FileName:     f.FileName,
 		FileSize:     f.FileSize,
-		LastOpTime:   f.LastOpTime,
-		CreateTime:   f.CreateTime,
+		LastOpTime:   lastOpTime,
+		CreateTime:   createTime,
 		Path:         f.Path,
 		MediaType:    f.MediaType,
 		IsFolder:     f.IsFolder,

@@ -92,11 +92,12 @@ func ParseAppCommonApiError(data []byte) *ApiError {
 	errResp := &AppErrorXmlResp{}
 	if err := xml.Unmarshal(data, errResp); err == nil {
 		if errResp.Code != "" {
-			if "InvalidArgument" == errResp.Code {
+			switch errResp.Code {
+			case "InvalidArgument":
 				return NewApiError(ApiCodeInvalidArgument, "参数无效")
-			} else if "InfoSecurityErrorCode" == errResp.Code {
+			case "InfoSecurityErrorCode":
 				return NewApiError(ApiCodeInfoSecurityError, "敏感文件或受版权保护，禁止上传")
-			} else if "UserDayFlowOverLimited" == errResp.Code {
+			case "UserDayFlowOverLimited":
 				return NewApiError(ApiCodeUserDayFlowOverLimited, "账号上传达到每日数量限额")
 			}
 			return NewFailedApiError(errResp.Message)

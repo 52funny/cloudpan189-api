@@ -20,6 +20,7 @@ import (
 	"math"
 	"net/url"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -106,9 +107,9 @@ type (
 		// FileSize 文件大小
 		FileSize int64 `xml:"size"`
 		// LastOpTime 最后修改时间
-		LastOpTime int64 `xml:"lastOpTime"`
+		LastOpTime string `xml:"lastOpTime"`
 		// CreateTime 创建时间
-		CreateTime int64 `xml:"createDate"`
+		CreateTime string `xml:"createDate"`
 		// 文件完整路径
 		Path string `xml:"path"`
 		// MediaType 媒体类型
@@ -282,28 +283,30 @@ func (afl AppFileList) Count() (fileN, directoryN int64) {
 	return
 }
 
-func (f *AppFileEntity) String() string {
-	builder := &strings.Builder{}
-	builder.WriteString("文件ID: " + f.FileId + "\n")
-	builder.WriteString("文件名: " + f.FileName + "\n")
-	if f.IsFolder {
-		builder.WriteString("文件类型: 目录\n")
-	} else {
-		builder.WriteString("文件类型: 文件\n")
-	}
-	builder.WriteString("文件路径: " + f.Path + "\n")
-	return builder.String()
-}
+// func (f *AppFileEntity) String() string {
+// 	builder := &strings.Builder{}
+// 	builder.WriteString("文件ID: " + f.FileId + "\n")
+// 	builder.WriteString("文件名: " + f.FileName + "\n")
+// 	if f.IsFolder {
+// 		builder.WriteString("文件类型: 目录\n")
+// 	} else {
+// 		builder.WriteString("文件类型: 文件\n")
+// 	}
+// 	builder.WriteString("文件路径: " + f.Path + "\n")
+// 	return builder.String()
+// }
 
 func (f *AppFileEntity) CreateFileEntity() *FileEntity {
+	lastOpTime, _ := strconv.ParseInt(f.LastOpTime, 10, 64)
+	createTime, _ := strconv.ParseInt(f.CreateTime, 10, 64)
 	return &FileEntity{
 		FileId:       f.FileId,
 		ParentId:     f.ParentId,
 		FileIdDigest: f.FileMd5,
 		FileName:     f.FileName,
 		FileSize:     f.FileSize,
-		LastOpTime:   f.LastOpTime,
-		CreateTime:   f.CreateTime,
+		LastOpTime:   lastOpTime,
+		CreateTime:   createTime,
 		Path:         f.Path,
 		MediaType:    f.MediaType,
 		IsFolder:     f.IsFolder,

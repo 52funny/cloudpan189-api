@@ -73,7 +73,18 @@ func (p *PanClient) AppGetFileDownloadUrl(fileId string) (string, *apierror.ApiE
 		fmt.Println("AppGetFileDownloadUrl parse response failed")
 		return "", apierror.NewApiErrorWithError(err)
 	}
-	return strings.ReplaceAll(item.FileDownloadUrl, "&amp;", "&"), nil
+	dialUrl := strings.ReplaceAll(item.FileDownloadUrl, "&amp;", "&")
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	resp, err := client.Get(dialUrl)
+	if err != nil {
+		return "", apierror.NewApiErrorWithError(err)
+	}
+	// fmt.Println(resp.Header)
+	return resp.Header.Get("Location"), nil
 }
 
 func (p *PanClient) AppDownloadFileData(downloadFileUrl string, fileRange AppFileDownloadRange, downloadFunc DownloadFuncCallback) *apierror.ApiError {
